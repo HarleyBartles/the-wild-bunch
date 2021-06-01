@@ -1,0 +1,14 @@
+﻿@using TheWildBunch.ViewModels
+
+@{
+    ViewData["Title"] = "The Wild Bunch in a SPA";
+    ClientSettingViewModel data = ViewData["AppSettings"] as ClientSettingViewModel;
+
+    dynamic initialReduxState = new { serverSettings = data };
+}
+
+<div id="react-app" asp-prerender-module="ClientApp/dist/main-server" asp-prerender-data=initialReduxState>Loading...</div>
+
+@section scripts {
+    <script src="~dist/home/main-client.js" asp-append-version="true"></script>
+}
