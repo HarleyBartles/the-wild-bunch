@@ -22,7 +22,7 @@ export default createServerRenderer(params => {
         const routerContext = {}
         const app = (
             <Provider store={store}>
-                <StaticRouter baseName={baseName} contect={routerContext} location={params.location.path}>
+                <StaticRouter baseName={baseName} context={routerContext} location={params.location.path}>
                     <RouteContainer />
                 </StaticRouter>
             </Provider>

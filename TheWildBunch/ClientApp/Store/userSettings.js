@@ -42,7 +42,7 @@ const setUserSettings = (state, data) => {
         messages,
         userId,
         userName
-    }
+    } = data
 
     return {
         ...state,

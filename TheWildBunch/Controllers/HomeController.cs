@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TheWildBunch.Models;
+using TheWildBunch.ViewModels;
 
 namespace TheWildBunch.Controllers
 {
@@ -12,6 +13,10 @@ namespace TheWildBunch.Controllers
     {
         public IActionResult Index()
         {
+            ViewData["AppSettings"] = new ClientSettingViewModel
+            {
+                ApplicationVersion = "1.0.0"
+            };
             return View();
         }
 

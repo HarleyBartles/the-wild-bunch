@@ -1,5 +1,5 @@
 ﻿const webpack = require('webpack')
-const merge = require('merge')
+const merge = require('webpack-merge')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const paths = require('./paths')
@@ -9,7 +9,7 @@ module.exports = (env) => {
 
     const sharedConfig = () => ({
         mode: 'development',
-        devtool: 'inline-module-source-map',
+        devtool: 'inline-cheap-module-source-map',
         resolve: {
             extensions: ['.js', '.jsx'],
             alias: {
@@ -21,8 +21,6 @@ module.exports = (env) => {
             publicPath: 'dist/'
         },
         node: {
-            fs: 'empty',
-            buffer: 'empty'
         },
         module: {
             rules: [
@@ -42,6 +40,7 @@ module.exports = (env) => {
                 }
             ]
         },
+        cache: false,
         plugins: [
         ]
     })
@@ -67,7 +66,7 @@ module.exports = (env) => {
         plugins: [
             new ExtractTextPlugin({
                 filename: 'site-css'
-            }),
+            })//,
             // ship the vendor manifest to reduce compile time by only recompiling user application
             //new webpack.DllReferencePlugin({
                 //context: __dirname,
@@ -88,15 +87,15 @@ module.exports = (env) => {
         entry: { 'main-server': paths.serverEntry },
 
         module: {
-            rule: [{ test: /\.css(\?|$)/, use: isDevBuild ? 'css-loader' : 'css-loader?minimize' }]
+            rules: [{ test: /\.css(\?|$)/, use: isDevBuild ? 'css-loader' : 'css-loader?minimize' }]
         },
 
         plugins: [
             //new webpack.DllReferencePlugin({
-              //  context: __dirname,
-                //manifest: require(paths.vendorManifest),
-                //sourceType: 'commonjs2',
-                //name: './vendor'
+            //    context: __dirname,
+            //    manifest: require(paths.vendorManifest),
+            //    sourceType: 'commonjs2',
+            //    name: './vendor'
             //}),
             new CaseSensitivePathsPlugin()
         ],

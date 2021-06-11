@@ -1,6 +1,6 @@
 ﻿'use strict'
 
-if (typeof Promise == 'undefined') {
+if (typeof Promise === 'undefined') {
     // rejection-tracking to prevent inconsistent state bug
     require('promise/lib/rejection-tracking').enable()
     window.Promise = require('promise/lib/es6-extension.js')

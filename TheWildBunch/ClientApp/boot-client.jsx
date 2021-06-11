@@ -6,7 +6,7 @@ import { ConnectedRouter } from 'connected-react-router'
 import { createBrowserHistory } from 'history'
 import configureStore from './configureStore'
 import RouteContainer from './routes'
-import requestManager from './MiddleWare/requests'
+import requestManager from './Middleware/requests'
 
 function renderApp() {
     const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href')
@@ -15,15 +15,15 @@ function renderApp() {
     const initialState = window.initialReduxState
     const store = configureStore(history, initialState)
 
-    requestManager.connectStore(store)
+    //requestManager.connectStore(store)
     //authenticationLayer.connectStore(store)
     //messageLayer.connectStore(store)
 
     ReactDOM.hydrate(
         <AppContainer>
-            <Provider>
+            <Provider store={store}>
                 <ConnectedRouter history={history}>
-                        <RouteContainer />
+                    <RouteContainer />
                 </ConnectedRouter>
             </Provider>
         </AppContainer>,

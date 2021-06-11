@@ -18,5 +18,5 @@ module.exports = {
     clientDist: resolveApp('wwwroot/dist/home'),
     serverEntry: resolveApp('ClientApp/boot-server.jsx'),
     serverDist: resolveApp('ClientApp/dist'),
-    //vendorManifest: resolveApp('wwwroot/dist/home/vendor-manifest.json')
+    vendorManifest: resolveApp('wwwroot/dist/home/vendor-manifest.json')
 }

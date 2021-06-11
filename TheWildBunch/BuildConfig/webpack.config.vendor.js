@@ -1,6 +1,6 @@
 ﻿const path = require('path')
 const webpack = require('webpack')
-const merge = require('merge')
+const merge = require('webpack-merge')
 const umd = require('umd-require-webpack-plugin')
 const paths = require('./paths')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
@@ -15,7 +15,7 @@ module.exports = (env) => {
 
     const sharedConfig = () => ({
         mode: 'development',
-        devtool: 'inline-module-source-map',
+        devtool: 'inline-cheap-module-source-map',
         stats: { modules: false },
         resolve: { extensions: ['.js', '.ts'] },
 
@@ -81,21 +81,22 @@ module.exports = (env) => {
     const serverBundleConfig = merge(sharedConfig(), {
         target: 'node',
         resolve: { mainFields: ['main'] },
-        entry: { 'vendor': ['aspnet-prerendering', 'react-dom-server'] },
+        output: {
+            path: paths.serverDist,
+            libraryTarget: 'commonjs2'
+        },
         module: {
             rule: [{ test: /\.css(\?|$)/, use: isDevBuild ? 'css-loader' : 'css-loader?minimize' }]
         },
+        entry: { vendor: ['aspnet-prerendering', 'react-dom-server'] },
         plugins: [
             umd,
             new webpack.DllPlugin({
-                path: paths.serverDist,
-                libraryTarget: 'commonjs2'
+                path: path.join(paths.serverDist, '[name]-manifest.json'),
+                name: '[name]_[hash]'
             })
-        ],
-        output: {
-            libraryTarget: 'commonjs',
-            path: paths.serverDist
-        }
+        ]
+        
     })
 
     return [clientBundleConfig, serverBundleConfig]

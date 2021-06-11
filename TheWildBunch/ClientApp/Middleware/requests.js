@@ -141,7 +141,7 @@ class RequestManager {
 
     localGetRequest(url, param, header, requireAuth = true) {
         const self = this
-        if (this._accessToken != null || !requireAuth) {
+        if (this._accessToken !== null || !requireAuth) {
             return localGetRequest(url, this._accessToken, param, header)
         } else {
             let requestParams = {
@@ -194,6 +194,8 @@ class RequestManager {
     }
 }
 
+const requestManager = new RequestManager()
+
 export const middleware = (store) => {
     return (next) => (action) => {
         switch (action.type) {
@@ -202,3 +204,5 @@ export const middleware = (store) => {
         }
     }
 }
+
+export default requestManager

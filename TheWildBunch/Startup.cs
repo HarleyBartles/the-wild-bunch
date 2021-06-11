@@ -13,11 +13,14 @@ using Microsoft.EntityFrameworkCore;
 using TheWildBunch.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TheWildBunch.Models;
+using TheWildBunch.Extensions;
 
 namespace TheWildBunch
 {
     public class Startup
     {
+        private ApplicationSettings _appSettings;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -34,6 +37,8 @@ namespace TheWildBunch
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
+            _appSettings = services.AddApplicationSettings();
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
@@ -62,7 +67,7 @@ namespace TheWildBunch
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may wavendont to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
