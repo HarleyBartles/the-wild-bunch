@@ -7,6 +7,8 @@ export const actions = {
 
 const initialState = {
     userId: 0,
+    userName: null,
+    isLoggedIn: false,
     actions: {
         load: storeEntityAction()
     }
