@@ -3,12 +3,22 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <UserSecretsId>aspnet-ReactApp-CE326037-5C8C-4CCD-ACF0-9D2988F04523</UserSecretsId>
-    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <TypeScriptCompileBlocked>false</TypeScriptCompileBlocked>
     <NoWin32Manifest>true</NoWin32Manifest>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>0.0.1</Version>
   </PropertyGroup>
-
+  <ItemGroup>
+    <Compile Remove="Logs\**" />
+    <Compile Remove="wwwroot\lib\**" />
+    <Compile Remove="wwwroot\images\**" />
+    <EmbeddedResource Remove="Logs\**" />
+    <EmbeddedResource Remove="wwwroot\lib\**" />
+    <EmbeddedResource Remove="wwwroot\images\**" />
+    <None Remove="Logs\**" />
+    <None Remove="wwwroot\lib\**" />
+    <None Remove="wwwroot\images\**" />
+  </ItemGroup>
   <ItemGroup>
     <Content Remove="ClientApp\dist\vendor-manifest.json" />
     <Content Remove="wwwroot\css\site.css" />
@@ -17,18 +27,16 @@
     <Content Remove="wwwroot\dist\home\main-client.js.map" />
     <Content Remove="wwwroot\dist\home\site.css" />
     <Content Remove="wwwroot\dist\home\site.css.map" />
-    <Content Remove="wwwroot\dist\home\vendor-manifest.js" />
+    <Content Remove="wwwroot\dist\home\vendor-manifest.json" />
     <Content Remove="wwwroot\dist\home\vendor.css" />
     <Content Remove="wwwroot\dist\home\vendor.js" />
-    <Content Remove="wwwroot\css\site.js" />
-    <Content Remove="wwwroot\css\site.min.js" />
+    <Content Remove="wwwroot\js\site.js" />
+    <Content Remove="wwwroot\js\site.min.js" />
   </ItemGroup>
-  
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -45,16 +53,13 @@
     <Content Update="wwwroot.favicon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Folder Include="ClientApp\Layouts\" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="ClientApp\dist\" />
     <Folder Include="ClientApp\ActionHandlers\" />
     <Folder Include="wwwroot\lib\react\" />
     <Folder Include="wwwroot\dist\" />
   </ItemGroup>
-
   <Target Name="DeployJSFiles" BeforeTargets="GetCopyToPublishDirectoryItems">
     <!-- Exclude old scripts -->
     <ItemGroup>
@@ -71,14 +76,14 @@
     <ItemGroup>
       <Message Importance="High" Text="Setting preserves latest client files" />
       <DistFiles Include="wwwroot\dist\**" />
-      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@ResolvedFileToPublish)">
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')">
         <RelativePath>%(DistFiles.Identity)</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </ResolvedFileToPublish>
 
       <Message Importance="High" Text="Setting preserves latest server files" />
       <PreRenderDistFiles Include="ClientApp\dist\**" />
-      <ResolvedFileToPublish Include="@(PreRenderDistFiles->'%(FullPath)')" Exclude="@ResolvedPreRenderFileToPublish)">
+      <ResolvedFileToPublish Include="@(PreRenderDistFiles->'%(FullPath)')" Exclude="@(ResolvedPreRenderFileToPublish)">
         <RelativePath>%(PreRenderDistFiles.Identity)</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </ResolvedFileToPublish>

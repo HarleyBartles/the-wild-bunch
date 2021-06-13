@@ -16,6 +16,4 @@ export const getUserSettings = () => {
     return ( dispatch ) => {
         type: actions.GET_USER_SETTINGS
     }
-
-    requests
 }

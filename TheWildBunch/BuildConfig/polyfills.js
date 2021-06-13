@@ -2,7 +2,9 @@
 
 if (typeof Promise === 'undefined') {
     // rejection-tracking to prevent inconsistent state bug
+    //require.resolve('../node_modules/promise/lib/rejection-tracking').enable()
     require('promise/lib/rejection-tracking').enable()
+    //window.Promise = require.resolve('../node_modules/promise/lib/es6-extension.js')
     window.Promise = require('promise/lib/es6-extension.js')
 }
 

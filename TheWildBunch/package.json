@@ -2,11 +2,6 @@
   "version": "1.0.0",
   "name": "the-wild-bunch.net",
   "private": true,
-  "scripts": {
-    "buildVendor": "webpack --config BuildConfig/webpack.config.vendor.js",
-    "buildScripts": "webpack --config BuildConfig/webpack.config.js",
-    "build": "npm run buildVendor & npm run buildScripts"
-  },
   "dependencies": {
     "@aspnet/signalr": "^1.0.0",
     "@babel/runtime": "^7.12.5",
@@ -27,7 +22,7 @@
     "bluebird": "^3.5.5",
     "bootstrap": "^4.3.1",
     "connected-react-router": "^6.1.0",
-    "css-loader": "^5.2.6",
+    "css-loader": "^3.1.0",
     "domain-task": "^3.0.3",
     "event-source-polyfill": "^1.0.7",
     "eventsource": "^1.0.7",
@@ -39,10 +34,10 @@
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "node-noop": "1.0.0",
-    "node-sass": "^5.0.0",
+    "node-sass": "^4.14.1",
     "numeral": "^2.0.6",
     "object-assign": "^4.1.1",
-    "promise": "^8.1.0",
+    "oidc-client": "^1.8.2",
     "qs": "^6.7.0",
     "query-string": "^6.8.2",
     "raf": "^3.4.1",
@@ -55,9 +50,9 @@
     "react-router-dom": "^5.1.2",
     "react-transition-group": "^4.2.1",
     "redux": "^4.0.4",
+    "redux-oidc": "^3.1.4",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
-    "trim-newlines": "^4.0.2",
     "tslib": "^1.10.0",
     "underscore": "^1.9.1",
     "url-loader": "^2.1.0",
@@ -78,13 +73,18 @@
     "babel-loader": "^8.2.2",
     "case-sensitive-paths-webpack-plugin": "^2.2.0",
     "react-dev-tools": "0.0.1",
-    "react-dev-utils": "^11.0.4",
+    "react-dev-utils": "^9.0.1",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
     "ts-loader": "^6.0.4",
     "typescript": "^3.5.3",
     "umd-require-webpack-plugin": "0.0.1",
-    "webpack": "^5.38.1",
+    "webpack": "^4.39.1",
     "webpack-cli": "^3.3.6"
+  },
+  "scripts": {
+    "buildVendor": "webpack --config BuildConfig/webpack.config.vendor.js",
+    "buildScripts": "webpack --config BuildConfig/webpack.config.js",
+    "build": "npm run buildVendor & npm run buildScripts"
   }
 }

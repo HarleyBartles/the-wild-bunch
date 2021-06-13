@@ -20,13 +20,14 @@ export default function configureStore(history, initialState) {
             routerMiddleware( history ),
             //authMiddleware,
             //signalRMiddleware,
-            requestMiddleware,
-            userSettingsMiddleware
+            //requestMiddleware,
+            //userSettingsMiddleware
         ),
     )(createStore)
 
     // Combine all reducers and instantiate the app-wide store instance
     const allReducers = buildRootReducer(reducers, history)
+    
     const store = createStoreWithMiddleware(allReducers, initialState)
 
     // Enable Webpack hot module replacement for reducers
@@ -36,6 +37,8 @@ export default function configureStore(history, initialState) {
             store.replaceReducer( buildRootReducer(nextRootReducer.reducers, history) )
         })
     }
+
+    return store
 }
 
 function buildRootReducer( allReducers, history ) {

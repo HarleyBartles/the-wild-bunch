@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 class MapContainer extends React.Component {
     render() {
 
-        return <span>Hola, glad you could make it</span>
+        return <span>The map will go here</span>
     }
 }
 

@@ -2,6 +2,7 @@
 import { Route, Switch } from 'react-router-dom'
 import Layout from './Components/Layout'
 import MapContainer from './Components/Map/MapContainer'
+import HomeContainer from './Components/HomeContainer'
 
 import { withRouter } from 'react-router'
 import { compose } from 'redux'
@@ -14,8 +15,12 @@ class RouteContainer extends React.Component {
 
         return (
             <Layout>
-                <Route path='/' Component={MapContainer} />
-                <Route path='/map' component={MapContainer} />
+                <Switch>
+                    <Route path='/'>
+                        <HomeContainer />
+                    </Route>
+                    <Route path='/map' component={MapContainer} />
+                </Switch>
             </Layout>
         )
     }

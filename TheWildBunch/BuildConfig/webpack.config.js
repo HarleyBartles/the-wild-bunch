@@ -1,15 +1,17 @@
-﻿const webpack = require('webpack')
+﻿const path = require('path')
+const webpack = require('webpack')
 const merge = require('webpack-merge')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const paths = require('./paths')
 
-module.exports = (env) => {
+const configuration = (env) => {
     const isDevBuild = !(env && env.prod)
 
+    // common configuration
     const sharedConfig = () => ({
         mode: 'development',
-        devtool: 'inline-cheap-module-source-map',
+        devtool: 'inline-module-source-map',
         resolve: {
             extensions: ['.js', '.jsx'],
             alias: {
@@ -21,12 +23,14 @@ module.exports = (env) => {
             publicPath: 'dist/'
         },
         node: {
+            fs: 'empty', // Because of jsrsasign usage of fs
+            buffer: 'empty'
         },
         module: {
             rules: [
                 {
                     test: [/\.js$/, /\.jsx$/],
-                    exclude: /node-modules/,
+                    exclude: /node_modules/,
                     use: 'babel-loader'
                 },
                 {
@@ -34,21 +38,21 @@ module.exports = (env) => {
                     use: 'url-loader?limit=25000'
                 },
                 {
-                    test: [/\.tsx?$/],
-                    exclude: /node-modules/,
+                    test: /\.tsx?$/,
+                    exclude: /node_modules/,
                     use: 'ts-loader'
                 }
             ]
         },
-        cache: false,
         plugins: [
         ]
     })
-
+    
     const clientBundleConfig = merge(sharedConfig(), {
         entry: {
             'main-client': [
-                require.resolve('./polyfills'),
+                // require.resolve('./polyfills'),
+                // require polyfill for async usage
                 'babel-polyfill',
                 paths.clientEntry
             ]
@@ -62,41 +66,41 @@ module.exports = (env) => {
             ]
         },
         output: { path: paths.clientDist },
-
         plugins: [
             new ExtractTextPlugin({
-                filename: 'site-css'
-            })//,
+                filename: 'site.css'
+            }),
             // ship the vendor manifest to reduce compile time by only recompiling user application
-            //new webpack.DllReferencePlugin({
-                //context: __dirname,
-                //manifest: require(paths.vendorManifest)
-            //})
+            new webpack.DllReferencePlugin({
+                context: __dirname,
+                manifest: require(paths.vendorManifest)
+            })
         ].concat(isDevBuild ? [
-
+            // plugins that apply in development builds only
+            
             // fixes hot reload case sensitive paths bug
             new CaseSensitivePathsPlugin()
         ] : [
-            new webpack.optimize.UglifyJsPlugin()
-        ])
+                // plugins that apply in production builds only
+                new webpack.optimize.UglifyJsPlugin()
+            ])
     })
 
     const serverBundleConfig = merge(sharedConfig(), {
         resolve: { mainFields: ['main'] },
-
         entry: { 'main-server': paths.serverEntry },
-
         module: {
             rules: [{ test: /\.css(\?|$)/, use: isDevBuild ? 'css-loader' : 'css-loader?minimize' }]
         },
-
         plugins: [
-            //new webpack.DllReferencePlugin({
-            //    context: __dirname,
-            //    manifest: require(paths.vendorManifest),
-            //    sourceType: 'commonjs2',
-            //    name: './vendor'
-            //}),
+            new webpack.DllReferencePlugin({
+                context: __dirname,
+                manifest: require(paths.vendorManifest),
+                sourceType: 'commonjs2',
+                name: './vendor'
+            }),
+
+            // fixes hot reload case sensitive paths bug
             new CaseSensitivePathsPlugin()
         ],
         output: {
@@ -109,3 +113,5 @@ module.exports = (env) => {
 
     return [clientBundleConfig, serverBundleConfig]
 }
+
+module.exports = configuration;

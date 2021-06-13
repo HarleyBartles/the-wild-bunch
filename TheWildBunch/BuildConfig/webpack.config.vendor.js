@@ -5,54 +5,51 @@ const umd = require('umd-require-webpack-plugin')
 const paths = require('./paths')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
-module.exports = (env) => {
+const configuration = (env) => {
     const isDevBuild = !(env && env.prod)
-
     const extractCSS = new ExtractTextPlugin({
         filename: 'vendor.css',
         allChunks: true
     })
 
+    const vendorLibs = [
+        'bootstrap/dist/css/bootstrap.css',
+        'domain-task',
+        'event-source-polyfill',
+        'babel-polyfill',
+        'history',
+        'react',
+        'react-dom',
+        'react-router-dom',
+        'react-redux',
+        'redux',
+        'redux-thunk',
+        'connected-react-router'
+    ]
+
     const sharedConfig = () => ({
         mode: 'development',
-        devtool: 'inline-cheap-module-source-map',
+        devtool: 'inline-module-source-map',
         stats: { modules: false },
-        resolve: { extensions: ['.js', '.ts'] },
-
+        resolve: { extensions: ['.js', '.jsx'] },
+        output: {
+            filename: '[name].js',
+            publicPath: 'dist/',
+            library: '[name]_[hash]'
+        },
+        node: {
+            fs: 'empty'
+        },
         module: {
-            rules: [
-                { test: [/\.js$/, /\.JSX$/], 'loader': 'babel-loader' },
-                { test: /\.(png|woff|woff2|eot|ttf|svg)$/, use: 'url-loader?limit=100000' },
-                { test: [/\.tsx?$/], use: 'ts-loader' }
+            rules: [             
+                { test: [/\.js$/, /\.jsx$/], use: 'babel-loader' }
             ]
         },
         cache: false,
         entry: {
-            vendor: [
-                'bootstrap/dist/css/bootstrap.css',
-                'domain-task',
-                'event-source-polyfill',
-                'babel-polyfill',
-                'history',
-                'react',
-                'react-dom',
-                'react-router-dom',
-                'react-redux',
-                'redux',
-                'redux-thunk',
-                'connected-react-router'
-            ]
-        },
-        output: {
-            publicPath: 'dist/',
-            filename: '[name].js',
-            library: '[name]_[hash]'
-        },
+            'vendor': vendorLibs
+        },        
         plugins: [
-            new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')),
-            new webpack.DefinePlugin({
-                'process.env.NODE_ENV': isDevBuild ? '"development"' : '"production'
-            })
         ]
     })
 
@@ -60,15 +57,12 @@ module.exports = (env) => {
         output: { path: paths.clientDist },
         module: {
             rules: [
-                {
-                    test: /\.css(\?|$)/,
-                    use: ExtractTextPlugin.extract({ use: isDevBuild ? 'css-loader' : 'css-loader?minimize' })
-                }
+                { test: /\.css(\?|$)/, use: extractCSS.extract({ use: isDevBuild ? 'css-loader' : 'css-loader?minimize' }) }
             ]
         },
         plugins: [
             extractCSS,
-            umd,            
+            umd,
             new webpack.DllPlugin({
                 path: path.join(paths.clientDist, '[name]-manifest.json'),
                 name: '[name]_[hash]'
@@ -86,9 +80,9 @@ module.exports = (env) => {
             libraryTarget: 'commonjs2'
         },
         module: {
-            rule: [{ test: /\.css(\?|$)/, use: isDevBuild ? 'css-loader' : 'css-loader?minimize' }]
+            rules: [{ test: /\.css(\?|$)/, use: isDevBuild ? 'css-loader' : 'css-loader?minimize' }]
         },
-        entry: { vendor: ['aspnet-prerendering', 'react-dom-server'] },
+        entry: { vendor: ['aspnet-prerendering', 'react-dom/server'] },
         plugins: [
             umd,
             new webpack.DllPlugin({
@@ -96,8 +90,9 @@ module.exports = (env) => {
                 name: '[name]_[hash]'
             })
         ]
-        
     })
 
     return [clientBundleConfig, serverBundleConfig]
 }
+
+module.exports = configuration
