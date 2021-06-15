@@ -62,7 +62,7 @@ namespace TheWildBunch.Identity
                 new Client
                 {
                     ClientName = "TheWildBunch",
-                    ClientId = "thewildbunchclient",
+                    ClientId = "thewildbunch_client",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     RedirectUris = new List<string>()
                     {
@@ -70,7 +70,7 @@ namespace TheWildBunch.Identity
                     },
                     PostLogoutRedirectUris = new List<string>()
                     {
-                        "https://localhost:44396/"
+                        "https://localhost:44396/logout"
                     },
                     AllowedScopes = 
                     {
@@ -80,7 +80,7 @@ namespace TheWildBunch.Identity
                     },
                     ClientSecrets = 
                     {
-                        new Secret("thewildbunchsecret".Sha256())
+                        new Secret("thewildbunch_secret".Sha256())
                     },
                     AllowedCorsOrigins = new List<string>()
                     {

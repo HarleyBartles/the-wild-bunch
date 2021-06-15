@@ -44,22 +44,22 @@ namespace TheWildBunch.Extensions
 
                     OIDCOptions = new OIDCClientAuthenticationSettings
                     {
-                        ClientId = config.GetValue<string>("AuthenticationOptions:OIDCOptions:ClientId"),
-                        ResponseType = config.GetValue<string>("AuthenticationOptions:OIDCOptions:ResponseType"),
-                        Scopes = config.GetValue<string>("AuthenticationOptions:OIDCOptions:Scopes").Split(" ").ToList(),
-
-                        Authority = config.GetValue<string>("AuthenticationOptions:OIDCOptions:Authority"),
-                        SilentRedirectURI = config.GetValue<string>("AuthenticationOptions:OIDCOptions:SilentRedirectURI"),
-                        AutomaticSilentRenew = config.GetValue<bool>("AuthenticationOptions:OIDCOptions:AutomaticSilentRenew"),
-                        FilterProtocolClaims = config.GetValue<bool>("AuthenticationOptions:OIDCOptions:FilterProtocolClaims"),
-                        LoadUserInfo = config.GetValue<bool>("AuthenticationOptions:OIDCOptions:LoadUserInfo"),
-                        //RevokeAccessTokensOnSignout = config.GetValue<bool>("AuthenticationOptions:OIDCOptions:RevokeAccessTokensOnSignout"),
-                        RedirectURI = config.GetValue<string>("AuthenticationOptions:OIDCOptions:RedirectURI"),
-                        PostLogoutRedirectURI = config.GetValue<string>("AuthenticationOptions:OIDCOptions:PostLogoutRedirectURI"),
-                        //StartURL = config.GetValue<string>("AuthenticationOptions:OIDCOptions:ClientId"),
-                        MonitorSession = config.GetValue<bool>("AuthenticationOptions:OIDCOptions:MonitorSession"),
-                        //SilentRequestTimeout = config.GetValue<int>("AuthenticationOptions:OIDCOptions:ClientId"),
-                        //CheckSessionInterval = config.GetValue<int>("AuthenticationOptions:OIDCOptions:ClientId"),
+                        ClientId = config.GetValue<string>("OIDCOptions:ClientId"),
+                        ResponseType = config.GetValue<string>("OIDCOptions:ResponseType"),
+                        Scopes = config.GetValue<string>("OIDCOptions:Scopes").Split(" ").ToList(),
+                        
+                        Authority = config.GetValue<string>("OIDCOptions:Authority"),
+                        SilentRedirectURI = config.GetValue<string>("OIDCOptions:SilentRedirectURI"),
+                        AutomaticSilentRenew = config.GetValue<bool>("OIDCOptions:AutomaticSilentRenew"),
+                        FilterProtocolClaims = config.GetValue<bool>("OIDCOptions:FilterProtocolClaims"),
+                        LoadUserInfo = config.GetValue<bool>("OIDCOptions:LoadUserInfo"),
+                        RevokeAccessTokensOnSignout = config.GetValue<bool>("OIDCOptions:RevokeAccessTokensOnSignout"),
+                        RedirectURI = config.GetValue<string>("OIDCOptions:RedirectURI"),
+                        PostLogoutRedirectURI = config.GetValue<string>("OIDCOptions:PostLogoutRedirectURI"),
+                        StartURL = config.GetValue<string>("OIDCOptions:ClientId"),
+                        MonitorSession = config.GetValue<bool>("OIDCOptions:MonitorSession"),
+                        SilentRequestTimeout = config.GetValue<int>("OIDCOptions:SilentRequestTimeout"),
+                        CheckSessionInterval = config.GetValue<int>("OIDCOptions:CheckSessionInterval"),
                     }
 
                 }
