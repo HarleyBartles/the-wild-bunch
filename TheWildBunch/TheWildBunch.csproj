@@ -34,8 +34,11 @@
     <Content Remove="wwwroot\js\site.min.js" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="IdentityServer4" Version="2.5.4" />
+    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="2.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.IdentityModel" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="appsettings.json">
@@ -56,8 +59,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ClientApp\dist\" />
+    <Folder Include="Services\" />
     <Folder Include="wwwroot\lib\react\" />
     <Folder Include="wwwroot\dist\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <Target Name="DeployJSFiles" BeforeTargets="GetCopyToPublishDirectoryItems">
     <!-- Exclude old scripts -->

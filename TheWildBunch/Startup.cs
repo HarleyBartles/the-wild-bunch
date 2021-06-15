@@ -1,58 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using IdentityModel.AspNetCore.OAuth2Introspection;
+using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TheWildBunch.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TheWildBunch.Models;
+using Microsoft.Extensions.Logging;
+using System.IdentityModel.Tokens.Jwt;
+using TheWildBunch.Data;
 using TheWildBunch.Extensions;
+using TheWildBunch.Models;
 
 namespace TheWildBunch
 {
     public class Startup
     {
         private ApplicationSettings _appSettings;
-        public Startup(IConfiguration configuration)
+        private readonly IHostingEnvironment _environment;
+        private readonly ILogger<Startup> _logger;
+        public Startup(IHostingEnvironment environment, ILoggerFactory loggerFactory)
         {
-            Configuration = configuration;
+            _environment = environment;
+            _logger = loggerFactory.CreateLogger<Startup>();
         }
-
-        public IConfiguration Configuration { get; }
-
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.Json");
 
             _appSettings = services.AddApplicationSettings();
-
+            
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddDefaultUI(UIFramework.Bootstrap4)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                options.UseSqlServer(_appSettings.GetConnectionString("DefaultConnection")));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            _logger.LogInformation("Adding authorization services");
+
+
+            AddAuthorizationServices(services);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env
+            //, ILoggingBuilder loggerBuilder
+            )
         {
+            //loggerBuilder.AddDebug();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -62,27 +61,89 @@ namespace TheWildBunch
                     HotModuleReplacement = true,
                     ReactHotModuleReplacement = true
                 });
-                app.UseDatabaseErrorPage();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
             }
 
             app.UseHttpsRedirection();
+            app.UseDefaultFiles();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
 
-            app.UseAuthentication();
-
+            ConfigureAuthentication(app);
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapSpaFallbackRoute(
+                    name: "spa-fallback",
+                    defaults: new { controller = "Home", action = "Index" });
+            });           
+        }
+
+        private void AddAuthorizationServices(IServiceCollection services)
+        {
+            var authOptions = _appSettings.AuthenticationOptions;
+
+            services.AddDefaultIdentity<IdentityUser>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+            
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = authOptions.AuthenticationServerUrl;
+                    options.RequireHttpsMetadata = true;
+
+                    options.ApiName = authOptions.ApiName;
+                    options.ApiSecret = authOptions.ApiSecret;
+
+                    options.RoleClaimType = "role";
+                    options.NameClaimType = "name";
+                    options.SaveToken = true;
+
+                    options.TokenRetriever = (request) =>
+                    {
+                        var fromHeader = TokenRetrieval.FromAuthorizationHeader();
+                        var fromQueryString = TokenRetrieval.FromQueryString();
+
+                        string accessToken = fromHeader.Invoke(request);
+
+                        if (string.IsNullOrEmpty(accessToken))
+                            accessToken = fromQueryString.Invoke(request);
+
+                        return accessToken;
+
+                    };
+                });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", corsPolicy =>
+                {
+                    corsPolicy.WithOrigins("https://localhost:44396/")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
             });
+        }
+
+        public void ConfigureAuthentication(IApplicationBuilder app)
+        {
+            app.UseCookiePolicy(new CookiePolicyOptions
+            {
+                HttpOnly = _appSettings.AuthenticationOptions.HttpOnlyPolicy,
+                Secure = _appSettings.AuthenticationOptions.SecurePolicy,
+                MinimumSameSitePolicy = _appSettings.AuthenticationOptions.SameSiteMode,
+            });
+
+            app.UseCors("CorsPolicy");
+
+            app.UseAuthentication();
         }
     }
 }

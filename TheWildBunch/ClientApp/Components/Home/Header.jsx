@@ -2,7 +2,8 @@
 import { Link } from 'react-router-dom'
 import LoginPartial from './LoginPartial'
 
-const Header = () => {
+const Header = (props) => {
+    
     return (
         <header>
             <nav className="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">

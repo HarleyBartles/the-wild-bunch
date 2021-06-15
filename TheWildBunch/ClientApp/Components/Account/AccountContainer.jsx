@@ -2,6 +2,7 @@
 import { Switch, Route, useRouteMatch } from 'react-router'
 import Login from './Login'
 import Register from './Register'
+import Profile from './Profile'
 
 const AccountContainer = (props) => {
     let match = useRouteMatch()
@@ -10,6 +11,7 @@ const AccountContainer = (props) => {
         <Switch>
             <Route path={`${match.path}/login`}><Login /></Route>
             <Route path={`${match.path}/register`}><Register /></Route>
+            <Route path={`${match.path}/profile`}><Profile /></Route>
         </Switch>
     )
 }

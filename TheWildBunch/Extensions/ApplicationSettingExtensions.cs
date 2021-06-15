@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -25,13 +27,46 @@ namespace TheWildBunch.Extensions
                         AppSettingKey = "DefaultConnection",
                         AppSettingValue = config.GetConnectionString("DefaultConnection")
                     }
+                },
+                AuthenticationOptions = new ClientAuthOptions 
+                {
+                    AuthenticationServerUrl = config.GetValue<string>("AuthenticationOptions:AuthenticationServerUrl"),
+                    ApiName = config.GetValue<string>("AuthenticationOptions:ApiName"),
+                    ApiSecret = config.GetValue<string>("AuthenticationOptions:ApiSecret"),
+                    ClientId = config.GetValue<string>("AuthenticationOptions:ClientId"),
+                    ClientSecret = config.GetValue<string>("AuthenticationOptions:ClientSecret"),
+
+                    RequireHttpsMetadata = config.GetValue<bool>("AuthenticationOptions:RequireHttpsMetadata"),
+
+                    SecurePolicy = (CookieSecurePolicy)config.GetValue<int>("AuthenticationOptions:SecurePolicy"),
+                    HttpOnlyPolicy = (HttpOnlyPolicy)config.GetValue<int>("AuthenticationOptions:HttpOnlyPolicy"),
+                    SameSiteMode = (SameSiteMode)config.GetValue<int>("AuthenticationOptions:SameSiteMode"),
+
+                    OIDCOptions = new OIDCClientAuthenticationSettings
+                    {
+                        ClientId = config.GetValue<string>("AuthenticationOptions:OIDCOptions:ClientId"),
+                        ResponseType = config.GetValue<string>("AuthenticationOptions:OIDCOptions:ResponseType"),
+                        Scopes = config.GetValue<string>("AuthenticationOptions:OIDCOptions:Scopes").Split(" ").ToList(),
+
+                        Authority = config.GetValue<string>("AuthenticationOptions:OIDCOptions:Authority"),
+                        SilentRedirectURI = config.GetValue<string>("AuthenticationOptions:OIDCOptions:SilentRedirectURI"),
+                        AutomaticSilentRenew = config.GetValue<bool>("AuthenticationOptions:OIDCOptions:AutomaticSilentRenew"),
+                        FilterProtocolClaims = config.GetValue<bool>("AuthenticationOptions:OIDCOptions:FilterProtocolClaims"),
+                        LoadUserInfo = config.GetValue<bool>("AuthenticationOptions:OIDCOptions:LoadUserInfo"),
+                        //RevokeAccessTokensOnSignout = config.GetValue<bool>("AuthenticationOptions:OIDCOptions:RevokeAccessTokensOnSignout"),
+                        RedirectURI = config.GetValue<string>("AuthenticationOptions:OIDCOptions:RedirectURI"),
+                        PostLogoutRedirectURI = config.GetValue<string>("AuthenticationOptions:OIDCOptions:PostLogoutRedirectURI"),
+                        //StartURL = config.GetValue<string>("AuthenticationOptions:OIDCOptions:ClientId"),
+                        MonitorSession = config.GetValue<bool>("AuthenticationOptions:OIDCOptions:MonitorSession"),
+                        //SilentRequestTimeout = config.GetValue<int>("AuthenticationOptions:OIDCOptions:ClientId"),
+                        //CheckSessionInterval = config.GetValue<int>("AuthenticationOptions:OIDCOptions:ClientId"),
+                    }
+
                 }
+                
             };
 
-            //config.Bind("Logging", appSettings._appSettings.Last());
-            //config.Bind("AllowedHosts", appSettings._appSettings.Last());
-
-            services.AddSingleton(typeof(IApplicationSettings), appSettings);
+            services.AddSingleton(typeof(ApplicationSettings), appSettings);
 
             return appSettings;
         }

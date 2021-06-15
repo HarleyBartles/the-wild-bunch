@@ -2,9 +2,7 @@
 import { connectRouter, routerMiddleware } from 'connected-react-router'
 import thunk from 'redux-thunk'
 import { reducers } from './Store'
-//import { middleware as authMiddleware } from './Middleware/authentication'
-import { middleware as userSettingsMiddleware } from './Middleware/userSettings'
-import { middleware as requestMiddleware } from './Middleware/requests'
+import { middleware as authMiddleware } from './authenticationLayer'
 
 export default function configureStore(history, initialState) {
     const composeEnhancers =
@@ -14,11 +12,12 @@ export default function configureStore(history, initialState) {
                 // Specify extension's options like name, actionsBlacklist, actionsCreators, serialize...
             }) : compose
 
+    //const oidcMiddleware = createOidcMiddleware(userManager)
     const createStoreWithMiddleware = composeEnhancers(
         applyMiddleware(
             thunk,
-            routerMiddleware( history ),
-            //authMiddleware,
+            routerMiddleware(history),
+            authMiddleware,
             //signalRMiddleware,
             //requestMiddleware,
             //userSettingsMiddleware
