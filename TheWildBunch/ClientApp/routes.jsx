@@ -28,8 +28,7 @@ class RouteContainer extends React.Component {
                 <Switch>
                     <Route exact path='/' component={HomeContainer} />
                     <Route path='/callback' component={LoginCallback} />
-                    {    //<Route path='/account' component={AccountContainer} />
-                    }
+                    <Route path='/account' component={AccountContainer} />
                     <Route path='/map' component={MapContainer} />
                     
                 </Switch>

@@ -1,28 +1,24 @@
 ﻿import React from 'react'
 import { CallbackComponent } from 'redux-oidc'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
+import { useHistory } from 'react-router'
 
-class LoginCallback extends React.Component {
-    render() {
-        return (
-            <CallbackComponent
-                userManager={this.props.userManager}
-                successCallback={() => this.props.dispatch(push('/'))}
-                errorCallback={error => {
-                    this.props.dispatch(push('/'))
-                    console.error(error)
-                }}>
+const LoginCallback = () => {
+    const userManager = useSelector(state => state.auth.userManager)
+    const history = useHistory()
 
-                <div>Redirecting...</div>
-            </CallbackComponent>
-        )
-    }
+    return (
+        <CallbackComponent
+            userManager={userManager}
+            successCallback={() => history.push('/')}
+            errorCallback={error => {
+                history.push('/')
+                console.error(error)
+            }}>
+
+            <div>Redirecting...</div>
+        </CallbackComponent>
+    )
 }
 
-const mapStateToProps = (state) => {
-    return {
-        userManager: state.auth.userManager
-    }
-}
-
-export default connect(mapStateToProps)(LoginCallback)
+export default connect()(LoginCallback)

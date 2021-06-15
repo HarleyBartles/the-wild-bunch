@@ -10,7 +10,7 @@ class AuthenticationLayer {
         this._authenticationClients = []
         this.options = this._getFormattedConfig(config)
         this.userManager = new UserManager(this.options)
-        this.authenticate()
+        this.updateUserManagerInStore()
         window.UserManager = this.userManager
         return this
     }
@@ -59,7 +59,6 @@ class AuthenticationLayer {
         if (this.userManager == null)
             return null;
 
-
         return this.userManager.getAccessToken();
     }
 
@@ -67,7 +66,6 @@ class AuthenticationLayer {
     loginRedirect() {
         if (!this.userManager)
             return;
-
 
         this.userManager.signinRedirect()
     }
@@ -104,33 +102,25 @@ class AuthenticationLayer {
     _onAuthenticationFailed() {
         console.warn("Authentication Failed!")
     }
-
-
+    
     _authenticate() {
         const self = this
-
-
+        
         if (!this.userManager || authenticating)
             return;
-
-
+        
         authenticating = true;
-
-
+        
         return this.userManager
             .signinRedirect()
             .then((user) => {
                 authenticating = false;
-
-
+                
                 if (user !== null)
                     self._userAuthenticated(user)
-
-
                 else
                     self._onAuthenticationFailed()
-
-
+                
                 self._initialAuthenticate = false
             })
             .catch((e) => {
@@ -168,12 +158,10 @@ const authenticationLayer = new AuthenticationLayer()
 
 export const middleware = (store) => {
     return (next) => (action) => {
-
-
+        
         if (!authenticationLayer.getUserManager())
             return;
-
-
+        
         switch (action.type) {
             case 'redux-oidc/USER_EXPIRING':
             case 'redux-oidc/USER_EXPIRED':
@@ -183,8 +171,7 @@ export const middleware = (store) => {
                 authenticationLayer.authenticate()
                 break;
         }
-
-
+        
         return next(action);
     }
 }
